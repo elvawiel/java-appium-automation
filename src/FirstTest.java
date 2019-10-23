@@ -177,4 +177,17 @@ public class FirstTest {
         element.clear();
         return element;
     }
+
+    private void compareSearchFieldText(By by, String error_message, long timeoutInSeconds)
+    {
+        WebElement searchField = waitForElementPresent(by, error_message, timeoutInSeconds);
+
+        String searchFieldText = searchField.getAttribute("text");
+
+        Assert.assertEquals(
+                "We got unexpected text for search input field",
+                "Search…",
+                searchFieldText
+        );
+    }
 }
