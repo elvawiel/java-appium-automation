@@ -172,6 +172,35 @@ public class FirstTest {
         );
     }
 
+    @Test
+    public void testSearchResultsAreRelevant()
+    {
+        String wordToSearch = "Java";
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/search_container"),
+                "Cannot find 'Search Wikipedia' input",
+                5
+        );
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Search…')]"),
+                wordToSearch,
+                "Cannot find search input",
+                5
+        );
+
+        waitForElementPresent(
+                By.id("org.wikipedia:id/search_results_list"),
+                "Cannot find search results",
+                5
+        );
+
+        List<WebElement> elementsTotal = driver.findElements(By.id("org.wikipedia:id/page_list_item_title"));
+        Assert.assertTrue("Not all search results are relevant", checkThatAllTitlesContainTheWord(elementsTotal, wordToSearch));
+
+    }
+
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds)
     {
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
@@ -228,5 +257,15 @@ public class FirstTest {
                 "Search…",
                 searchFieldText
         );
+    }
+
+    private boolean checkThatAllTitlesContainTheWord(List<WebElement> elements, String word)
+    {
+        for(WebElement element : elements)
+        {
+            if(!element.getText().contains(word))
+                return false;
+        }
+        return true;
     }
 }
