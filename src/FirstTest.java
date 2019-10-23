@@ -11,6 +11,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
+import java.util.List;
 
 public class FirstTest {
 
@@ -130,6 +131,44 @@ public class FirstTest {
                 "We see unexpected title!",
                 "Java (programming language)",
                 articleTitle
+        );
+    }
+
+    @Test
+    public void testSearchForArticlesAndCancelSearch()
+    {
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/search_container"),
+                "Cannot find 'Search Wikipedia' input",
+                5
+        );
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Search…')]"),
+                "Java",
+                "Cannot find search input",
+                5
+        );
+
+        waitForElementPresent(
+                By.id("org.wikipedia:id/search_results_list"),
+                "Cannot find search results",
+                5
+        );
+
+        List<WebElement> elements = driver.findElements(By.id("org.wikipedia:id/page_list_item_container"));
+        Assert.assertTrue("Number of search results is less than expected", elements.size() > 1);
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/search_close_btn"),
+                "Cannot find X to cancel search",
+                5
+        );
+
+        waitForElementNotPresent(
+                By.id("org.wikipedia:id/search_results_list"),
+                "Search results are still present on the page",
+                5
         );
     }
 
