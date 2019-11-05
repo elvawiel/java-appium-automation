@@ -694,6 +694,32 @@ public class FirstTest {
                 article_title_opened_from_list);
     }
 
+    @Test
+    public void testTitleOfArticleExists() {
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia' input",
+                5
+        );
+
+        String search_word = "Java";
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Search…')]"),
+                search_word,
+                "Cannot find search input",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
+                "Cannot find 'Object-oriented programming language' article",
+                5
+        );
+
+        assertElementPresent(By.id("org.wikipedia:id/view_page_title_text"));
+
+    }
+
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds)
     {
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
@@ -835,5 +861,11 @@ public class FirstTest {
     {
         WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
         return element.getAttribute(attribute);
+    }
+
+    private void assertElementPresent(By by)
+    {
+        boolean element_exists = driver.findElements(by).size() != 0;
+        Assert.assertTrue("Element " + by.toString() + "is not found", element_exists);
     }
 }
