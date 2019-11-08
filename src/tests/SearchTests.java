@@ -1,13 +1,8 @@
 package tests;
 
 import lib.CoreTestCase;
-import lib.ui.MainPageObject;
 import lib.ui.SearchPageObject;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-
-import java.util.List;
 
 public class SearchTests extends CoreTestCase
 {
