@@ -1,7 +1,11 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+import java.util.List;
 
 public class SearchPageObject extends MainPageObject {
 
@@ -11,7 +15,9 @@ public class SearchPageObject extends MainPageObject {
             SEARCH_CANCEL_BUTTON = "org.wikipedia:id/search_close_btn",
             SEARCH_RESULT_BY_SUBSTRING_TPL = "//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='{SUBSTRING}']",
             SEARCH_RESULT_ELEMENT = "//*[@resource-id='org.wikipedia:id/search_results_list']/*[@resource-id='org.wikipedia:id/page_list_item_container']",
-            SEARCH_EMPTY_RESULT_ELEMENT = "//*[@text='No results found']";
+            SEARCH_EMPTY_RESULT_ELEMENT = "//*[@text='No results found']",
+            SEARCH_RESULT_LIST = "org.wikipedia:id/search_results_list",
+            SEARCH_ARTICLE_TITLE = "org.wikipedia:id/page_list_item_title";
 
     public SearchPageObject(AppiumDriver driver)
     {
@@ -119,5 +125,21 @@ public class SearchPageObject extends MainPageObject {
                 By.xpath(SEARCH_RESULT_ELEMENT),
                 "We supposed not to find any results"
         );
+    }
+
+    public void assertSearchIsCanceled()
+    {
+        this.assertElementNotPresent(
+                By.id(SEARCH_RESULT_LIST),
+                "Search results are displayed after search is cancelled"
+        );
+    }
+
+    public void assertAllTitlesContainSearchedWord(String word)
+    {
+        boolean all_titles_contain_word = this.checkThatAllTitlesContainTheWord(By.id(SEARCH_ARTICLE_TITLE), word);
+        if (!all_titles_contain_word){
+            throw new AssertionError("Not all titles contain searched word: " + word);
+    }
     }
 }

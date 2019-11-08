@@ -78,8 +78,9 @@ public class MainPageObject {
         );
     }
 
-    public boolean checkThatAllTitlesContainTheWord(List<WebElement> elements, String word)
+    public boolean checkThatAllTitlesContainTheWord(By by, String word)
     {
+        List<WebElement> elements = driver.findElements(by);
         for(WebElement element : elements)
         {
             if(!element.getText().contains(word))

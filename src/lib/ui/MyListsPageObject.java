@@ -8,7 +8,8 @@ public class MyListsPageObject extends MainPageObject {
     private static final String
         FOLDER_BY_NAME_TPL = "//*[@text='{FOLDER_NAME}']",
         ARTICLE_BY_TITLE_TPL = "//*[@text='{TITLE}']",
-        MY_LISTS = "org.wikipedia:id/reading_list_list";
+        MY_LISTS = "org.wikipedia:id/reading_list_list",
+        MY_LIST_ARTICLE_ELEMENT = "//*[@resource-id='org.wikipedia:id/page_list_item_container']";
 
     private static String getFolderXPathByName(String name_of_folder)
     {
@@ -74,5 +75,20 @@ public class MyListsPageObject extends MainPageObject {
                 "Cannot find saved article"
         );
         this.waitForArticleToDisappearByTitle(article_title);
+    }
+
+    public int getAmountOfSavedArticles()
+    {
+        return this.getAmountOfElements(By.xpath(MY_LIST_ARTICLE_ELEMENT));
+    }
+
+    public void openArticleFromMyList(String article_title)
+    {
+        String article_xpath = getSavedArticleXPathByTitle(article_title);
+        this.waitForElementAndClick(
+                By.xpath(article_xpath),
+                "Cannot find and click article by title " + article_title,
+                15
+        );
     }
 }

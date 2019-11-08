@@ -14,11 +14,17 @@ public class ArticlePageObject extends MainPageObject {
         ADD_TO_MY_LIST_OVERLAY = "org.wikipedia:id/onboarding_button",
         MY_LIST_NAME_INPUT = "org.wikipedia:id/text_input",
         MY_LIST_OK_BUTTON = "//*[@text='OK']",
-        CLOSE_ARTICLE_BUTTON = "//android.widget.ImageButton[@content-desc='Navigate up']";
+        CLOSE_ARTICLE_BUTTON = "//android.widget.ImageButton[@content-desc='Navigate up']",
+        MY_LIST_FOLDER_ELEMENT_TPL = "//*[@text='{FOLDER}']";
 
     public ArticlePageObject(AppiumDriver driver)
     {
         super(driver);
+    }
+
+    private static String getMyListFolderElement(String name_of_folder)
+    {
+        return MY_LIST_FOLDER_ELEMENT_TPL.replace("{FOLDER}", name_of_folder);
     }
 
     public WebElement waitForTitleElement()
@@ -32,7 +38,7 @@ public class ArticlePageObject extends MainPageObject {
 
     public String getArticleTitle()
     {
-        WebElement title_element = waitForTitleElement();
+        WebElement title_element = this.waitForTitleElement();
         return title_element.getAttribute("text");
     }
 
@@ -90,7 +96,28 @@ public class ArticlePageObject extends MainPageObject {
         this.waitForElementAndClick(
                 By.xpath(CLOSE_ARTICLE_BUTTON),
                 "Cannot close article, cannot find X link",
+                15
+        );
+    }
+
+    public void addArticleToExistingFolderInMyLists(String name_of_folder)
+    {
+        this.waitForElementAndClick(
+                By.xpath(OPTIONS_BUTTON),
+                "Cannot find button to open article options",
                 5
+        );
+
+        this.waitForElementAndClick(
+                By.xpath(OPTIONS_ADD_TO_MY_LIST_BUTTON),
+                "Cannot find option to add article to reading list",
+                5
+        );
+
+        this.waitForElementAndClick(
+                By.xpath(getMyListFolderElement(name_of_folder)),
+                "Cannot find and click the folder in MyList with name: " + name_of_folder,
+                15
         );
     }
 }
