@@ -13,7 +13,8 @@ public class SearchPageObject extends MainPageObject {
             SEARCH_RESULT_ELEMENT = "//*[@resource-id='org.wikipedia:id/search_results_list']/*[@resource-id='org.wikipedia:id/page_list_item_container']",
             SEARCH_EMPTY_RESULT_ELEMENT = "//*[@text='No results found']",
             SEARCH_RESULT_LIST = "org.wikipedia:id/search_results_list",
-            SEARCH_ARTICLE_TITLE = "org.wikipedia:id/page_list_item_title";
+            SEARCH_ARTICLE_TITLE = "org.wikipedia:id/page_list_item_title",
+            SEARCH_RESULT_BY_TITLE_AND_DESCRIPTION_TPL = "//*[@resource-id='org.wikipedia:id/page_list_item_container']/[@resource-id='org.wikipedia:id/page_list_item_title'][@text='{TITLE}']//..//[@text='{DESCRIPTION}']/..";
 
     public SearchPageObject(AppiumDriver driver)
     {
@@ -24,6 +25,12 @@ public class SearchPageObject extends MainPageObject {
     private static String getResultSearchElement(String substring)
     {
         return SEARCH_RESULT_BY_SUBSTRING_TPL.replace("{SUBSTRING}", substring);
+    }
+
+    private static String getResultByTitleAndDescription(String title, String description)
+    {
+        String element_locator = SEARCH_RESULT_BY_TITLE_AND_DESCRIPTION_TPL.replace("{TITLE}", title);
+        return SEARCH_RESULT_BY_TITLE_AND_DESCRIPTION_TPL.replace("{DESCRIPTION}", description);
     }
     /* TEMPLATES METHODS */
 
@@ -137,5 +144,14 @@ public class SearchPageObject extends MainPageObject {
         if (!all_titles_contain_word){
             throw new AssertionError("Not all titles contain searched word: " + word);
     }
+    }
+
+    public void waitForElementByTitleAndDescription(String title, String description)
+    {
+        String search_result_xpath = getResultByTitleAndDescription(title, description);
+        this.waitForElementPresent(
+                By.xpath(search_result_xpath),
+                "Cannot find search result with substring " + description
+        );
     }
 }
