@@ -16,7 +16,8 @@ abstract public class ArticlePageObject extends MainPageObject {
         MY_LIST_NAME_INPUT,
         MY_LIST_OK_BUTTON,
         CLOSE_ARTICLE_BUTTON,
-        MY_LIST_FOLDER_ELEMENT_TPL;
+        MY_LIST_FOLDER_ELEMENT_TPL,
+        MY_LISTS_FOR_EXAMPLE;
 
     public ArticlePageObject(AppiumDriver driver)
     {
@@ -33,7 +34,7 @@ abstract public class ArticlePageObject extends MainPageObject {
         return this.waitForElementPresent(
                 TITLE,
                 "Cannot find article title on page!",
-                15
+                30
         );
     }
 
@@ -77,30 +78,39 @@ abstract public class ArticlePageObject extends MainPageObject {
                 5
         );
 
-        this.waitForElementAndClick(
-                ADD_TO_MY_LIST_OVERLAY,
-                "Cannot find 'Got it' tip overlay",
-                5
-        );
+        By by = this.getLocatorByString(MY_LISTS_FOR_EXAMPLE);
+        if(driver.findElements(by).size() != 0) {
+            this.waitForElementAndClick(
+                    ADD_TO_MY_LIST_OVERLAY,
+                    "Cannot find 'Got it' tip overlay",
+                    5
+            );
 
-        this.waitForElementAndClear(
-                MY_LIST_NAME_INPUT,
-                "Cannot find input to set name of articles folder",
-                5
-        );
+            this.waitForElementAndClear(
+                    MY_LIST_NAME_INPUT,
+                    "Cannot find input to set name of articles folder",
+                    5
+            );
 
-        this.waitForElementAndSendKeys(
-                MY_LIST_NAME_INPUT,
-                name_of_folder,
-                "Cannot put text into articles folder input",
-                5
-        );
+            this.waitForElementAndSendKeys(
+                    MY_LIST_NAME_INPUT,
+                    name_of_folder,
+                    "Cannot put text into articles folder input",
+                    5
+            );
 
-        this.waitForElementAndClick(
-                MY_LIST_OK_BUTTON,
-                "Cannot press OK button",
-                5
-        );
+            this.waitForElementAndClick(
+                    MY_LIST_OK_BUTTON,
+                    "Cannot press OK button",
+                    5
+            );
+        } else {
+            this.waitForElementAndClick(
+                    getMyListFolderElement(name_of_folder),
+                    "Cannot find and click the folder in MyList with name: " + name_of_folder,
+                    15
+            );
+        }
     }
 
     public void closeArticle()
