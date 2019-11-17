@@ -47,7 +47,6 @@ public class MyListsTests extends CoreTestCase
     public void testSaveTwoArticlesToMyList()
     {
         String search_word = "Java";
-        String name_of_folder = "Learning programming";
 
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
@@ -57,7 +56,11 @@ public class MyListsTests extends CoreTestCase
         ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.waitForTitleElement();
         String first_article_title = ArticlePageObject.getArticleTitle();
-        ArticlePageObject.addArticleToMyList(name_of_folder);
+        if(Platform.getInstance().isAndroid()) {
+            ArticlePageObject.addArticleToMyList(name_of_folder);
+        } else {
+            ArticlePageObject.addArticleToMySaved();
+        }
         ArticlePageObject.closeArticle();
 
         SearchPageObject.initSearchInput();
@@ -66,14 +69,20 @@ public class MyListsTests extends CoreTestCase
 
         ArticlePageObject.waitForTitleElement();
         String second_article_title = ArticlePageObject.getArticleTitle();
-        ArticlePageObject.addArticleToExistingFolderInMyLists(name_of_folder);
+        if(Platform.getInstance().isAndroid()) {
+            ArticlePageObject.addArticleToExistingFolderInMyLists(name_of_folder);
+        } else {
+            ArticlePageObject.addArticleToMySaved();
+        }
         ArticlePageObject.closeArticle();
 
         NavigationUI NavigationUI = NavigationUIFactory.get(driver);
         NavigationUI.clickMyLists();
 
         MyListsPageObject MyListsPageObject = MyListsPageObjectFactory.get(driver);
-        MyListsPageObject.openFolderByName(name_of_folder);
+        if(Platform.getInstance().isAndroid()) {
+            MyListsPageObject.openFolderByName(name_of_folder);
+        }
         MyListsPageObject.waitForArticleToAppearByTitle(first_article_title);
         MyListsPageObject.waitForArticleToAppearByTitle(second_article_title);
         int articles_amount = MyListsPageObject.getAmountOfSavedArticles();
