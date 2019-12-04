@@ -16,6 +16,9 @@ import java.util.List;
 public class MyListsTests extends CoreTestCase
 {
     private static String name_of_folder = "Learning programming";
+    private static final String
+        login = "test",
+        password = "test";
 
     @Test
     public void testSaveFirstArticleToMyList()
@@ -33,10 +36,21 @@ public class MyListsTests extends CoreTestCase
         } else {
             ArticlePageObject.addArticleToMySaved();
         }
+        if(Platform.getInstance().isMw()) {
+            AuthorizationPageObject auth = new AuthorizationPageObject(driver);
+            auth.clickAuthButton();
+            auth.enterLoginData(login, password);
+            auth.submitForm();
+            ArticlePageObject.waitForTitleElement();
+
+            assertEquals("We are not on the same page after login", article_title, ArticlePageObject.getArticleTitle());
+            ArticlePageObject.addArticleToMySaved();
+        }
 
         ArticlePageObject.closeArticle();
 
         NavigationUI NavigationUI = NavigationUIFactory.get(driver);
+        NavigationUI.openNavigation();
         NavigationUI.clickMyLists();
 
         MyListsPageObject MyListsPageObject = MyListsPageObjectFactory.get(driver);

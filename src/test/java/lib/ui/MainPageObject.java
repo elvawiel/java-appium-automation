@@ -6,6 +6,7 @@ import lib.Platform;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -154,6 +155,11 @@ public class MainPageObject {
                 "Cannot find element by locator",
                 1
         ).getLocation().getY();
+        if(Platform.getInstance().isMw()) {
+            JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
+            Object is_result = javascriptExecutor.executeScript("return window.pageYOffset");
+            element_location_by_y -= Integer.parseInt(is_result.toString());
+        }
         int screen_size_by_y = driver.manage().window().getSize().getHeight();
         return element_location_by_y < screen_size_by_y;
     }
@@ -251,7 +257,43 @@ public class MainPageObject {
         action.tap(point_to_click_x, point_to_click_y).perform();
     } else {
         System.out.println("Method clickElementToTheRightUpperCorner() does nothing for platform " + Platform.getInstance().getPlatformVar());
+        }
     }
 
+    public void scrollWebPageUp() {
+        if(Platform.getInstance().isMw()) {
+            JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
+            javascriptExecutor.executeScript("windows.scrollBy(0, 250)");
+        } else {
+            System.out.println("Method scrollWebPageUp() does nothing for platform " + Platform.getInstance().getPlatformVar());
+        }
+    }
+
+    public void scrollWebPageTillElementNotVisible(String locator, String error_message, int max_swipes) {
+        int alreadySwiped = 0;
+        WebElement element = this.waitForElementPresent(locator, error_message);
+        while(!this.isElementLocatedOnTheScreen(locator)) {
+            scrollWebPageUp();
+            ++alreadySwiped;
+            if(alreadySwiped > max_swipes) {
+                Assert.assertTrue(error_message, element.isDisplayed());
+            }
+        }
+    }
+
+    public void tryClickElementWithFewAttempts(String locator, String error_message, int amount_of_attempts) {
+        int current_attempts = 0;
+        boolean need_more_attempts = true;
+        while(need_more_attempts) {
+            try {
+                this.waitForElementAndClick(locator, error_message, 1);
+                need_more_attempts = false;
+            } catch (Exception e) {
+                if(current_attempts > amount_of_attempts) {
+                    this.waitForElementAndClick(locator, error_message, 1);
+                }
+            }
+            ++current_attempts;
+        }
     }
 }
